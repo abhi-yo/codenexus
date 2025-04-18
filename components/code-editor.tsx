@@ -29,7 +29,7 @@ export default function CodeEditor() {
   if (!mounted) return null
 
   return (
-    <div className="h-40 rounded-md overflow-hidden">
+    <div className="h-48 rounded-md overflow-hidden">
       <MonacoEditor
         height="100%"
         defaultLanguage="javascript"
@@ -38,12 +38,12 @@ export default function CodeEditor() {
         options={{
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
-          fontSize: 13,
+          fontSize: 14,
           fontFamily: "JetBrains Mono, monospace",
           lineNumbers: "off",
           folding: false,
           lineDecorationsWidth: 10,
-          padding: { top: 6, bottom: 6 },
+          padding: { top: 8, bottom: 8 },
         }}
       />
     </div>

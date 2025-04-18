@@ -7,26 +7,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
-  title: "CodeNexus - Enhance Your Code With AI",
-  description: "Transform your code into something extraordinary with Groq AI-powered enhancements",
-  openGraph: {
-    title: "CodeNexus - Enhance Your Code With AI",
-    description: "Transform your code into something extraordinary with Groq AI-powered enhancements",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "CodeNexus - AI Code Enhancement Platform",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "CodeNexus - Enhance Your Code With AI",
-    description: "Transform your code into something extraordinary with Groq AI-powered enhancements",
-    images: ["/og-image.jpg"],
-  },
+  title: "CodeNexus - AI Code Assistant",
+  description: "Enhance your code with AI-powered suggestions and improvements",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({

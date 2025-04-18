@@ -12,21 +12,33 @@ export const BackgroundBeamsWithCollision = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const [beams, setBeams] = useState<Array<{
+    initialX: number;
+    translateX: number;
+    duration: number;
+    repeatDelay: number;
+    delay: number;
+    className: string;
+  }>>([]);
 
-  const beams = Array.from({ length: 60 }, (_, i) => ({
-    initialX: Math.random() * 2000,
-    translateX: 0,
-    duration: Math.random() * 1.5 + 1,
-    repeatDelay: 0,
-    delay: Math.random() * 3,
-    className: `h-${Math.floor(Math.random() * 3 + 2)}`,
-  }));
+  useEffect(() => {
+    setBeams(
+      Array.from({ length: 60 }, () => ({
+        initialX: Math.random() * 2000,
+        translateX: 0,
+        duration: Math.random() * 1.5 + 1,
+        repeatDelay: 0,
+        delay: Math.random() * 3,
+        className: `h-${Math.floor(Math.random() * 3 + 2)}`,
+      }))
+    );
+  }, []);
 
   return (
     <div
       ref={parentRef}
       className={cn(
-        "absolute inset-0 z-0 overflow-hidden",
+        "absolute inset-0 z-0",
         className
       )}
     >
@@ -174,13 +186,25 @@ const CollisionMechanism = React.forwardRef<
 CollisionMechanism.displayName = "CollisionMechanism";
 
 const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
-  const spans = Array.from({ length: 5 }, (_, index) => ({
-    id: index,
-    initialX: 0,
-    initialY: 0,
-    directionX: Math.floor(Math.random() * 16 - 8),
-    directionY: Math.floor(Math.random() * -16 - 4),
-  }));
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    initialX: number;
+    initialY: number;
+    directionX: number;
+    directionY: number;
+  }>>([]);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 5 }, (_, index) => ({
+        id: index,
+        initialX: 0,
+        initialY: 0,
+        directionX: Math.floor(Math.random() * 16 - 8),
+        directionY: Math.floor(Math.random() * -16 - 4),
+      }))
+    );
+  }, []);
 
   return (
     <div {...props} className={cn("absolute z-50 h-0.5 w-0.5", props.className)}>
@@ -191,13 +215,13 @@ const Explosion = ({ ...props }: React.HTMLProps<HTMLDivElement>) => {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="absolute -inset-x-1.5 top-0 m-auto h-0.5 w-2 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent blur-[0.5px]"
       ></motion.div>
-      {spans.map((span) => (
+      {particles.map((particle) => (
         <motion.span
-          key={span.id}
-          initial={{ x: span.initialX, y: span.initialY, opacity: 1 }}
+          key={particle.id}
+          initial={{ x: particle.initialX, y: particle.initialY, opacity: 1 }}
           animate={{
-            x: span.directionX,
-            y: span.directionY,
+            x: particle.directionX,
+            y: particle.directionY,
             opacity: 0,
           }}
           transition={{ duration: Math.random() * 0.4 + 0.2, ease: "easeOut" }}
