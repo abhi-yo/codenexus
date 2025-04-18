@@ -1,51 +1,64 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import dynamic from "next/dynamic"
+import React, { useRef } from 'react';
+import Editor, { Monaco, OnMount } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
+import { useTheme } from 'next-themes';
 
-// Dynamically import Monaco Editor to avoid SSR issues
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-  ssr: false,
-  loading: () => <div className="h-80 bg-gray-800 animate-pulse rounded-md" />,
-})
-
-const defaultCode = `// Write your code here
-function fibonacci(n) {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+interface CodeEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  height?: string;
+  language?: string;
+  options?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
-// This function can be optimized
-console.log(fibonacci(10));
-`
+const CodeEditor: React.FC<CodeEditorProps> = ({ 
+  value,
+  onChange,
+  height = "12rem", // Default height h-48
+  language = 'javascript', // Default language
+  options // Destructure options
+}) => {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const { resolvedTheme } = useTheme();
 
-export default function CodeEditor() {
-  const [mounted, setMounted] = useState(false)
+  const handleEditorChange = (newValue: string | undefined) => {
+    onChange(newValue || '');
+  };
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const handleEditorDidMount: OnMount = (editor, monacoInstance) => {
+    editorRef.current = editor;
+    // You can configure the editor here if needed
+  };
 
-  if (!mounted) return null
+  // Merge default options with passed options
+  const finalOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+    minimap: { enabled: false },
+    fontSize: 14,
+    scrollBeyondLastLine: false,
+    padding: { top: 8, bottom: 8 },
+    automaticLayout: true,
+    // Default specific options that can be overridden
+    lineNumbers: 'on',
+    glyphMargin: true,
+    folding: true,
+    ...options, // Spread passed options last to override defaults
+  };
 
   return (
-    <div className="h-48 rounded-md overflow-hidden">
-      <MonacoEditor
-        height="100%"
-        defaultLanguage="javascript"
-        defaultValue={defaultCode}
-        theme="vs-dark"
-        options={{
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          fontSize: 14,
-          fontFamily: "JetBrains Mono, monospace",
-          lineNumbers: "off",
-          folding: false,
-          lineDecorationsWidth: 10,
-          padding: { top: 8, bottom: 8 },
-        }}
+    <div>
+      <Editor
+        height={height} 
+        language={language}
+        value={value}
+        onChange={handleEditorChange}
+        onMount={handleEditorDidMount}
+        theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
+        options={finalOptions}
       />
     </div>
-  )
-}
+  );
+};
+
+export default CodeEditor;

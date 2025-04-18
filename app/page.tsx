@@ -6,8 +6,26 @@ import CodeEditor from "@/components/code-editor"
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision"
 import { useState } from "react"
 
+const defaultCode = `// Write your code here
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// This function can be optimized
+console.log(fibonacci(10));`;
+
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [code, setCode] = useState<string>(defaultCode); // State for editor code
+
+  // Handler for editor changes
+  const handleEditorChange = (value: string) => {
+    setCode(value);
+  };
+
+  // Encode code for URL
+  const encodedCode = encodeURIComponent(code);
 
   return (
     <main className="relative min-h-screen flex flex-col">
@@ -46,7 +64,7 @@ export default function Home() {
                 </Link>
               </li>
               <li>
-                <Link href="#about" className="hover:text-teal-600 transition-colors">
+                <Link href="/about" className="hover:text-teal-600 transition-colors">
                   About
                 </Link>
               </li>
@@ -101,7 +119,7 @@ export default function Home() {
                     </li>
                     <li>
                       <Link 
-                        href="#about" 
+                        href="/about"
                         className="block px-4 py-2 text-white/90 hover:bg-white/10 transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -125,7 +143,7 @@ export default function Home() {
           </p>
           <div className="flex justify-center gap-4">
             <Link
-              href="#editor"
+              href={`/enhance?code=${encodedCode}`}
               className="bg-teal-800 hover:bg-teal-700 text-white font-inter px-6 py-2.5 rounded-md transition-all hover:shadow-lg hover:shadow-teal-900/30 text-sm"
             >
               Try Now
@@ -144,7 +162,15 @@ export default function Home() {
           <h3 className="text-3xl font-instrument-serif text-white mb-10 text-center">Write Your Code</h3>
           <div className="max-w-3xl mx-auto">
             <div className="bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-gray-700 shadow-xl">
-              <CodeEditor />
+              <CodeEditor 
+                value={code} 
+                onChange={handleEditorChange} 
+                options={{
+                  lineNumbers: 'off', // Hide line numbers
+                  glyphMargin: false, // Hide glyph margin (gap)
+                  folding: false, // Hide folding indicators (also part of the gap)
+                }}
+              />
             </div>
           </div>
         </section>
